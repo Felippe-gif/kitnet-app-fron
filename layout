@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LL • Imóveis (top avatar & actions)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Inter+Tight:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --tertiary:#7c5cff;   /* fundo principal */
+      --bg:#0d1117;         /* page bg */
+      --panel:#111827;      /* cards */
+      --text:#e6e6e6;       /* primaryText */
+      --muted:#9aa3af;      /* muted text */
+      --accent:#7c5cff;     /* buttons */
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:14px;
+      --device-w:481.4px;   /* do Flutter */
+      --device-h:898.85px;  /* do Flutter */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; min-height:100vh}
+    body{
+      margin:0; background: radial-gradient(1000px 800px at 10% 0%, #121a2a, transparent 65%),
+                                 radial-gradient(1000px 800px at 100% 90%, #141b2a, transparent 55%),
+                                 var(--bg); color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      display:grid; place-items:center; padding: 20px;
+    }
+    .device{ width:min(var(--device-w), 96vw); height:min(var(--device-h), 96vh); background:var(--tertiary); border-radius:26px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column }
+
+    /* HEADER */
+    .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px }
+    .ico-btn{ width:36px; height:36px; display:grid; place-items:center; border-radius:10px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); cursor:pointer }
+    .ico{ width:22px; height:22px; color:#fff }
+
+    /* CONTENT LAYOUT */
+    .content{ flex:1; display:grid; grid-template-rows: auto auto auto auto 1fr auto; gap:14px; padding: 8px 14px 14px; overflow:auto; overscroll-behavior:contain }
+
+    /* TOP AVATAR */
+    .avatar{ margin: 0 auto 2px; width:100px; height:100px; border-radius:50%; overflow:hidden; box-shadow: 0 8px 24px rgba(0,0,0,.25); border:2px solid rgba(255,255,255,.2) }
+    .avatar img{ width:100%; height:100%; object-fit:cover }
+
+    /* ACTION BAR (TOP) */
+    .bar-btn{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap }
+    .btn{ height:38px; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#111827; color:#fff; border:none; border-radius:10px; font: 600 14px/1 Inter Tight, Inter, sans-serif; padding: 0 12px; cursor:pointer; box-shadow: 0 10px 24px rgba(0,0,0,.2) }
+    .btn.light{ background:#fff; color:#111 }
+
+    /* FLIP CARD */
+    .flip-wrap{ background:#e0e3e733; border-radius:12px; padding:14px }
+    .flip{ width:100%; height:clamp(200px, 32vh, 320px); perspective:1200px; border-radius:12px }
+    .flip-inner{ position:relative; width:100%; height:100%; transition:transform .6s; transform-style:preserve-3d; border-radius:12px }
+    .flip.is-back .flip-inner{ transform: rotateY(180deg) }
+    .face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; align-items:flex-start; justify-content:flex-start; padding:16px; font-weight:600; font-size:20px }
+    .front{ background: var(--tertiary) }
+    .back{ background: #EE8B60; transform: rotateY(180deg) }
+
+    /* FORM */
+    .form{ display:grid; gap:12px }
+    .row{ display:grid; grid-template-columns: 1fr 1fr; gap:12px }
+    .input-wrap{ position:relative }
+    .label{ font:600 14px/1 Inter Tight, Inter, sans-serif; color:#e5e7eb; margin-bottom:6px; display:block }
+    .input{ width:100%; height:44px; padding:0 12px 0 44px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:#0f1623; color:var(--text); font-weight:600 }
+    .input:focus{ outline:none; border-color: rgba(124,92,255,.8); box-shadow: 0 0 0 3px rgba(124,92,255,.25) }
+    .in-icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:20px; height:20px; color:#cbd5e1; opacity:.9; pointer-events:none }
+
+    /* PROMO + CTA */
+    .promo{ margin: 6px auto 8px; width: min(300px, 88%); height: 140px; border-radius:18px; overflow:hidden }
+    .promo img{ width:100%; height:100%; object-fit:cover }
+    .cta{ display:flex; justify-content:center }
+
+    /* SHEET / TOAST */
+    .sheet-backdrop{ position: fixed; inset:0; background: rgba(0,0,0,.5); display:none; align-items:flex-end; z-index:50 }
+    .sheet{ width:100%; max-height: 75vh; background: var(--panel); border-radius: 16px 16px 0 0; padding: 16px; box-shadow: var(--shadow) }
+    .sheet h3{ margin: 8px 0 12px; font: 600 16px/1 Inter, sans-serif }
+    .sheet p{ margin: 0 0 12px; color: var(--muted) }
+    .close-x{ position:absolute; right:16px; top:10px; background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer }
+    .toast{ position: fixed; inset: auto 50% 24px auto; transform: translateX(50%); background:#10151f; border:1px solid rgba(255,255,255,.08); color:#e6e6e6; padding:10px 14px; border-radius: 10px; box-shadow: var(--shadow); font: 500 13px/1.3 Inter, sans-serif; opacity: 0; pointer-events: none; transition: .25s ease; z-index:60 }
+    .toast.show{ opacity:1 }
+
+    @media (max-height: 760px){
+      .avatar{ width:88px; height:88px }
+      .flip{ height: 240px; }
+      .promo{ height: 120px; }
+      .btn{ height:36px; }
+      .label{ font-size:13px }
+      .input{ height:40px }
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="ico-btn" data-open="contato" title="Contato" aria-label="Contato">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 16.92V19a2 2 0 01-2.18 2A19.8 19.8 0 013 5.18 2 2 0 015 3h2.09a2 2 0 012 1.72c.12.9.32 1.77.59 2.61a2 2 0 01-.45 2.11L8 10a16 16 0 006 6l.56-1.23a2 2 0 012.11-.45c.84.27 1.71.47 2.61.59A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button class="ico-btn" data-open="config" title="Configurações" aria-label="Configurações">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 001 1.51c.5.2 1.08.17 1.56-.08l.06-.06a2 2 0 012.83 2.83l-.06.06c-.25.48-.28 1.06-.08 1.56.24.48.7.82 1.22.92H21a2 2 0 010 4h-.09c-.57 0-1.1.24-1.51 1z" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+
+    <div class="content">
+      <!-- AVATAR NO TOPO -->
+      <div class="avatar"><img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=400&auto=format&fit=crop" alt="avatar"/></div>
+
+      <!-- BOTÕES NO TOPO -->
+      <div class="bar-btn">
+        <button class="btn" data-open="dicas">DICAS 💡</button>
+        <button class="btn" data-open="ofertas">OFERTAS 💸</button>
+        <button class="btn" data-open="anunciar">ANUNCIAR !</button>
+      </div>
+
+      <!-- FLIP CARD -->
+      <div class="flip-wrap">
+        <div class="flip" id="flipCard">
+          <div class="flip-inner">
+            <div class="face front"><span>ALUGAR</span></div>
+            <div class="face back"><span>COMPRAR</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM FIELDS -->
+      <div class="form">
+        <div class="input-wrap">
+          <label class="label" for="cidade">CIDADE</label>
+          <input class="input" id="cidade" placeholder="Digite a cidade" />
+          <svg class="in-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
+        </div>
+        <div class="input-wrap">
+          <label class="label" for="bairro">BAIRRO</label>
+          <input class="input" id="bairro" placeholder="Digite o bairro" />
+          <svg class="in-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10l9-7 9 7v8a2 2 0 01-2 2h-4v-6H9v6H5a2 2 0 01-2-2v-8z" fill="currentColor"/></svg>
+        </div>
+        <div class="row">
+          <div class="input-wrap">
+            <label class="label" for="quartos">QUARTOS</label>
+            <input class="input" id="quartos" inputmode="numeric" placeholder="Ex.: 2"/>
+            <svg class="in-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10h18v10H3zM7 10V7a3 3 0 016 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="input-wrap">
+            <label class="label" for="preco">PREÇO</label>
+            <input class="input" id="preco" inputmode="decimal" placeholder="Ex.: 1500"/>
+            <svg class="in-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1v22M17 5H9a3 3 0 000 6h6a3 3 0 010 6H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROMO -->
+      <div class="promo"><img src="https://i.pinimg.com/originals/5f/be/16/5fbe1685b1f7d617361fdb63e0c94a7e.gif" alt="promo"/></div>
+
+      <!-- CTA -->
+      <div class="cta"><button class="btn light" id="buscar">BUSCAR IMÓVEIS</button></div>
+    </div>
+  </div>
+
+  <!-- Bottom Sheet -->
+  <div class="sheet-backdrop" id="sheet">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <button class="close-x" aria-label="Fechar" id="sheetClose">✕</button>
+      <h3 id="sheetTitle">Título</h3>
+      <div id="sheetBody"><p>Conteúdo do modal.</p></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const qs = (s, el=document)=> el.querySelector(s);
+    const qsa = (s, el=document)=> [...el.querySelectorAll(s)];
+
+    const toast = qs('#toast');
+    function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), 1600); }
+
+    // Flip logic
+    const flip = qs('#flipCard');
+    flip.addEventListener('click', ()=>{
+      flip.classList.toggle('is-back');
+      const isBack = flip.classList.contains('is-back');
+      showToast(isBack ? 'Modo: COMPRAR' : 'Modo: ALUGAR');
+    });
+
+    // Bottom sheet logic
+    const sheet = qs('#sheet');
+    const sheetTitle = qs('#sheetTitle');
+    const sheetBody = qs('#sheetBody');
+    const sheetClose = qs('#sheetClose');
+    const openSheet = (title, html)=>{ sheetTitle.textContent = title; sheetBody.innerHTML = html; sheet.style.display = 'flex'; };
+    const closeSheet = ()=>{ sheet.style.display = 'none'; };
+    sheetClose.addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target === sheet) closeSheet(); });
+
+    qsa('[data-open]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.getAttribute('data-open');
+        if(id==='dicas'){
+          openSheet('DICAS 💡', <p>• Defina um orçamento e filtre por preço.</p><p>• Use o flip para alternar entre <b>Alugar</b> e <b>Comprar</b>.</p><p>• Informe bairro e cidade para resultados mais precisos.</p>);
+        } else if(id==='ofertas'){
+          openSheet('OFERTAS 💸', <p>Ofertas em destaque aparecem aqui. Integre com sua API para listar promoções.</p>);
+        } else if(id==='anunciar'){
+          openSheet('ANUNCIAR !', <p>Publique seu imóvel informando fotos, título, descrição, preço e localização.</p><button class='btn' onclick='alert("Simulação de envio.")'>Enviar anúncio</button>);
+        } else if(id==='config'){
+          openSheet('Configurações', <p>Abra o painel de perfil para alterar nome, e-mail e foto.</p>);
+        } else if(id==='contato'){
+          openSheet('Contato', <p>Fale conosco: <a href='mailto:contato@exemplo.com'>contato@exemplo.com</a></p>);
+        }
+      });
+    });
+
+    // Buscar imóveis
+    qs('#buscar').addEventListener('click', ()=>{
+      const payload = {
+        modo: qs('#flipCard').classList.contains('is-back') ? 'comprar' : 'alugar',
+        bairro: qs('#bairro')?.value?.trim() || '',
+        cidade: qs('#cidade')?.value?.trim() || '',
+        quartos: qs('#quartos')?.value?.trim() || '',
+        preco: qs('#preco')?.value?.trim() || ''
+      };
+      if(!payload.cidade){ showToast('Informe a cidade.'); return; }
+      showToast('Buscando imóveis...');
+      openSheet('Resultados', <p>Em breve os resultados aparecerão aqui.</p><pre style=\"white-space:pre-wrap; background:#0b1220; padding:10px; border-radius:8px\">${JSON.stringify(payload, null, 2)}</pre>);
+    });
+  </script>
+</body>
+</html>

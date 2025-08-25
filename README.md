@@ -33,11 +33,3 @@ O foco é proporcionar uma **boa experiência de usuário** e preparar o front-e
 - [ ] Adicionar autenticação de usuários  
 - [ ] Melhorar performance e acessibilidade
 
----
-
-## 📷 Preview
-*(Adicione aqui um print ou GIF da interface do projeto quando disponível)*
-
----
-
-## 📂 Estrutura do Projeto

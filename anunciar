@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📣 Anunciar Imóvel (Safe Mode)</title>
+  <style>
+    :root{
+      --bg:#0d1117; --panel:#0f1623; --panel2:#121a2a; --brand:#7c5cff; --brand2:#14b8a6; --text:#e6e6e6; --muted:#a8b3cf; --shadow:0 14px 36px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial; display:grid; place-items:center; padding:18px}
+    .device{width:min(460px,96vw); height:min(860px,96vh); background:#1a2030; border-radius:24px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column}
+    .header{background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:12px 14px}
+    .header h1{margin:0; font-weight:800; font-size:18px}
+    .icon-btn{width:32px; height:32px; display:grid; place-items:center; border-radius:8px; background:rgba(0,0,0,.2); border:1px solid rgba(255,255,255,.25); cursor:pointer}
+    .content{flex:1; padding:12px; overflow:auto; display:grid; gap:12px}
+    .panel{background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px}
+    .panel h2{margin:0 0 8px; font-weight:800; font-size:16px}
+    .top{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.04)); padding:10px 12px}
+    .avatar{width:56px; height:56px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,.2); display:grid; place-items:center; background:#0e1522}
+    .intro{font-weight:800}
+    .gif{width:110px; height:66px; border-radius:10px; background:#0e1522; display:grid; place-items:center; color:#93c5fd; font-weight:700; border:1px solid rgba(255,255,255,.12)}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:var(--panel2); color:var(--muted); cursor:pointer; font-weight:700; user-select:none}
+    .chip.active{background:#fff; color:#111}
+    .grid{display:grid; gap:10px}
+    .float{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .field{display:grid; gap:6px}
+    label{font-weight:800; font-size:12px; color:#dbe1f1}
+    input{height:40px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:#0f1623; color:#fff; padding:0 12px; font-weight:600}
+    input:focus{outline:none; border-color:var(--brand)}
+    .btn{height:44px; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#111827; color:#fff; border:none; border-radius:12px; font-weight:800; padding:0 16px; cursor:pointer; box-shadow:0 10px 24px rgba(0,0,0,.2)}
+    .btn.brand{background:var(--brand)} .btn.alt{background:var(--brand2)}
+    .helper{color:var(--muted); text-align:center; font-weight:600}
+    .quick{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .err{color:#fecaca; font-weight:800; font-size:12px; display:none}
+    .toast{position:fixed; inset:auto 50% 16px auto; transform:translateX(50%); background:#10151f; border:1px solid rgba(255,255,255,.08); color:#e6e6e6; padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); font-weight:600; opacity:0; pointer-events:none; transition:.25s; z-index:60}
+    .toast.show{opacity:1}
+    @media (max-height:760px){ .device{height:96vh} }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="header">
+      <h1>📣 Anunciar Imóvel</h1>
+      <button class="icon-btn" id="closeBtn" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="top">
+      <div class="avatar">
+        <!-- Avatar SVG inline (sem depender de arquivos) -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#93c5fd"/><path d="M4 20a8 8 0 1116 0" stroke="#93c5fd" stroke-width="2" fill="none"/></svg>
+      </div>
+      <div class="intro">Comece o seu cadastro !!</div>
+      <div class="gif">GIF</div>
+    </div>
+
+    <main class="content">
+      <section class="panel">
+        <h2>Dados do anúncio</h2>
+        <div class="chips" role="tablist">
+          <div class="chip active" role="tab" aria-selected="true" data-mode="endereco">ENDEREÇO</div>
+          <div class="chip" role="tab" aria-selected="false" data-mode="cep">CEP</div>
+        </div>
+
+        <form id="form" class="grid" novalidate>
+          <div class="field">
+            <label for="nome">NOME</label>
+            <input id="nome" name="nome" placeholder="Seu nome" autocomplete="name" />
+            <div class="err" data-err="nome">Informe seu nome.</div>
+          </div>
+
+          <div class="float">
+            <div class="field">
+              <label for="pais">PAÍS</label>
+              <input id="pais" name="pais" value="+55" />
+              <div class="err" data-err="pais">Ex.: +55</div>
+            </div>
+            <div class="field">
+              <label for="area">ÁREA (m²)</label>
+              <input id="area" name="area" inputmode="numeric" placeholder="ex.: 35" />
+              <div class="err" data-err="area">Informe a metragem em números.</div>
+            </div>
+          </div>
+
+          <div class="field" id="rowEndereco">
+            <label for="endereco">ENDEREÇO</label>
+            <input id="endereco" name="endereco" placeholder="Rua, número, bairro, cidade" />
+            <div class="err" data-err="endereco">Preencha o endereço completo.</div>
+          </div>
+
+          <div class="field" id="rowCep" style="display:none">
+            <label for="cep">CEP</label>
+            <input id="cep" name="cep" placeholder="Somente números" inputmode="numeric" maxlength="8" />
+            <div class="err" data-err="cep">Informe um CEP válido (8 dígitos).</div>
+          </div>
+
+          <div class="field">
+            <label for="cel">CELULAR</label>
+            <input id="cel" name="cel" placeholder="(11) 9 1234-5678" inputmode="tel" />
+            <div class="err" data-err="cel">Informe um telefone válido.</div>
+          </div>
+
+          <button type="submit" class="btn brand">COMEÇAR CADASTRO</button>
+        </form>
+      </section>
+
+      <div class="helper">Se preferir, você também pode falar com nosso time de especialistas:</div>
+      <div class="quick">
+        <button class="btn alt" id="btnWhats">Whatsapp</button>
+        <button class="btn" id="btnCall">Telefone</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Helpers seguros (não quebram se um seletor não existir)
+    const qs=(s,el=document)=>el.querySelector(s);
+    const qsa=(s,el=document)=>Array.from(el.querySelectorAll(s));
+    const on=(el,ev,cb)=> el && el.addEventListener(ev,cb);
+
+    // Toast
+    const toast = qs('#toast');
+    function showToast(msg){ if(!toast) return; toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), 1600); }
+
+    // Fechar
+    on(qs('#closeBtn'),'click',()=>{ const dev=qs('.device'); if(!dev) return; dev.style.transform='scale(.98) translateY(8px)'; dev.style.opacity='0'; setTimeout(()=> dev.remove(),180); });
+
+    // Chips ENDEREÇO | CEP
+    const chips = qsa('.chip');
+    const rowEndereco = qs('#rowEndereco');
+    const rowCep = qs('#rowCep');
+    chips.forEach(ch=> on(ch,'click',()=>{
+      chips.forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-selected','false'); });
+      ch.classList.add('active'); ch.setAttribute('aria-selected','true');
+      const mode = ch.dataset.mode;
+      if(mode==='endereco'){ if(rowEndereco) rowEndereco.style.display='grid'; if(rowCep) rowCep.style.display='none'; }
+      else{ if(rowEndereco) rowEndereco.style.display='none'; if(rowCep) rowCep.style.display='grid'; }
+    }));
+
+    // Máscara simples telefone
+    const onlyDigits = s => (s||'').replace(/\D+/g,'');
+    const isPhone = s => onlyDigits(s).length >= 10;
+    const isCep = s => onlyDigits(s).length === 8;
+    const cel = qs('#cel');
+    on(cel,'input',()=>{
+      if(!cel) return; let v = onlyDigits(cel.value).slice(0,11);
+      const p = v.length>10? /^(\d{2})(\d{1})(\d{4})(\d{4})$/:/^(\d{2})(\d{4})(\d{4})$/;
+      cel.value = v.replace(p, v.length>10? '($1) $2 $3-$4' : '($1) $2-$3');
+    });
+
+    // Submit
+    on(qs('#form'),'submit', (e)=>{
+      e.preventDefault();
+      qsa('.err').forEach(el=> el.style.display='none');
+      const data = {
+        nome: qs('#nome')?.value.trim()||'',
+        pais: qs('#pais')?.value.trim()||'',
+        area: qs('#area')?.value.trim()||'',
+        endereco: qs('#endereco')?.value.trim()||'',
+        cep: qs('#cep')?.value.trim()||'',
+        cel: qs('#cel')?.value.trim()||'',
+        modo: qs('.chip.active')?.dataset.mode||'endereco'
+      };
+      let ok = true;
+      const show = key => (qs([data-err="${key}"])||{}).style.display='block';
+      if(!data.nome){ show('nome'); ok=false; }
+      if(!data.pais){ show('pais'); ok=false; }
+      if(!/^\d{1,4}$/.test(onlyDigits(data.area))){ show('area'); ok=false; }
+      if(data.modo==='endereco'){
+        if(data.endereco.length<8){ show('endereco'); ok=false; }
+      }else if(!isCep(data.cep)){ show('cep'); ok=false; }
+      if(!isPhone(data.cel)){ show('cel'); ok=false; }
+      if(!ok){ showToast('Revise os campos destacados'); return; }
+      const resumo = Nome: ${data.nome}\nPaís: ${data.pais}\nÁrea: ${onlyDigits(data.area)} m²\n${data.modo==='endereco'? 'Endereço' : 'CEP'}: ${data.modo==='endereco'? data.endereco : data.cep}\nCelular: ${data.cel};
+      if(navigator.clipboard?.writeText){ navigator.clipboard.writeText(resumo).catch(()=>{}); }
+      showToast('Cadastro iniciado!');
+      console.log('Payload para API:', data);
+    });
+
+    // Ações rápidas (funcionam mesmo em file://; tel abre discador, wa abre link)
+    on(qs('#btnWhats'),'click',()=>{
+      const phone = onlyDigits(qs('#cel')?.value) || '5511912345678';
+      location.href = https://wa.me/${phone};
+    });
+    on(qs('#btnCall'),'click',()=>{
+      const phone = onlyDigits(qs('#cel')?.value) || '551140025678';
+      location.href = tel:+${phone};
+    });
+  </script>
+</body>
+</html>

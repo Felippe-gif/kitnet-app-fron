@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🏠 Orientações</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Inter+Tight:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0d1117;           /* page background */
+      --surface:#0f1623;      /* panel bg */
+      --brand:#7c5cff;        /* accent */
+      --text:#e6e6e6;         /* primary text */
+      --muted:#a8b3cf;        /* secondary */
+      --ok:#10b981;           /* success */
+      --shadow:0 14px 36px rgba(0,0,0,.35);
+      --radius:16px;
+      --device-w: 643.8px;    /* do Flutter */
+      --device-h: 860.8px;    /* do Flutter */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; min-height:100vh}
+    body{
+      margin:0; background: radial-gradient(1200px 900px at 10% 0%, #141c2b 0%, transparent 60%),
+                                 radial-gradient(1000px 800px at 100% 90%, #131a27 0%, transparent 55%),
+                                 var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      display:grid; place-items:center; padding: 18px;
+    }
+    .device{ width:min(var(--device-w), 96vw); height:min(var(--device-h), 96vh); background:#1a2030; border-radius:26px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column }
+
+    /* Header */
+    .header{ background: var(--brand); color:#0b0d10; display:flex; align-items:center; justify-content:space-between; padding:14px 16px }
+    .header h1{ margin:0; font: 700 20px/1.2 Inter Tight, Inter, sans-serif; color:#fff }
+    .icon-btn{ width:36px; height:36px; display:grid; place-items:center; border-radius:10px; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.25); cursor:pointer }
+    .ico{ width:20px; height:20px; color:#fff }
+
+    /* Content */
+    .content{ flex:1; padding: 16px; overflow:auto; display:grid; grid-template-rows: auto auto auto; gap:16px }
+
+    .card{ background: var(--surface); border:1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25) }
+    .card h2{ margin: 0 0 10px; font: 700 18px/1.2 Inter Tight, Inter, sans-serif }
+    .desc{ margin:0 0 12px; color: var(--muted) }
+
+    .list{ list-style:none; margin:0; padding:0; display:grid; gap:10px }
+    .item{ display:flex; gap:10px; align-items:flex-start; background:#0e1522; border:1px solid rgba(255,255,255,.06); padding:10px 12px; border-radius:12px }
+    .check{ flex:0 0 24px; width:24px; height:24px; display:grid; place-items:center; border-radius:8px; background:var(--ok); color:#001; font-weight:800 }
+    .item p{ margin:2px 0 0; line-height:1.45 }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px }
+    .btn{ height:40px; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#111827; color:#fff; border:none; border-radius:10px; font: 600 14px/1 Inter Tight, Inter, sans-serif; padding: 0 14px; cursor:pointer; box-shadow: 0 10px 24px rgba(0,0,0,.2) }
+    .btn.brand{ background: var(--brand) }
+
+    .split{ display:grid; grid-template-columns: 1fr; gap:16px }
+    @media (min-width: 520px){ .split{ grid-template-columns: 1fr 1fr } }
+
+    /* Toast */
+    .toast{ position: fixed; inset: auto 50% 20px auto; transform: translateX(50%); background:#10151f; border:1px solid rgba(255,255,255,.08); color:#e6e6e6; padding:10px 14px; border-radius: 10px; box-shadow: var(--shadow); font: 500 13px/1.3 Inter, sans-serif; opacity:0; pointer-events:none; transition:.25s; z-index:60 }
+    .toast.show{ opacity:1 }
+
+    @media (max-height: 760px){ .btn{ height:36px } .header h1{ font-size:18px } }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="header">
+      <h1>🏠 Orientações</h1>
+      <button class="icon-btn" id="closeBtn" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <main class="content">
+      <section class="card">
+        <h2>Boas práticas gerais</h2>
+        <p class="desc">Dicas rápidas para uma experiência tranquila.</p>
+        <div class="split">
+          <div>
+            <h3 style="margin:0 0 8px 0; font:700 15px/1.2 Inter, sans-serif">Para inquilinos</h3>
+            <ul class="list" id="listInq">
+              <li class="item"><span class="check">✓</span><p>Pague o aluguel dentro do prazo.</p></li>
+              <li class="item"><span class="check">✓</span><p>Zele pela conservação do imóvel.</p></li>
+              <li class="item"><span class="check">✓</span><p>Respeite as regras do contrato.</p></li>
+              <li class="item"><span class="check">✓</span><p>Comunique qualquer problema ao proprietário.</p></li>
+            </ul>
+            <div class="actions"><button class="btn brand" id="copyInq">Copiar lista do inquilino</button></div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px 0; font:700 15px/1.2 Inter, sans-serif">Para proprietários</h3>
+            <ul class="list" id="listProp">
+              <li class="item"><span class="check">✓</span><p>Mantenha o imóvel limpo e em boas condições para atrair interessados.</p></li>
+              <li class="item"><span class="check">✓</span><p>Descreva o imóvel com clareza no anúncio.</p></li>
+              <li class="item"><span class="check">✓</span><p>Inclua fotos reais e atuais.</p></li>
+              <li class="item"><span class="check">✓</span><p>Seja transparente nas condições do contrato.</p></li>
+            </ul>
+            <div class="actions"><button class="btn brand" id="copyProp">Copiar lista do proprietário</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const qs = (s, el=document)=> el.querySelector(s);
+
+    // Close
+    qs('#closeBtn').addEventListener('click', ()=>{
+      const dev = qs('.device');
+      dev.style.transform = 'scale(.98) translateY(8px)';
+      dev.style.opacity = '0';
+      setTimeout(()=> dev.remove(), 180);
+    });
+
+    // Toast
+    const toast = qs('#toast');
+    function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), 1600); }
+
+    // Copy helpers
+    qs('#copyInq').addEventListener('click', async ()=>{
+      const items = [
+        'Pagar o aluguel dentro do prazo',
+        'Zelar pela conservação do imóvel',
+        'Respeitar as regras do contrato',
+        'Comunicar problemas ao proprietário'
+      ].map((t,i)=> ${i+1}. ${t}).join('\n');
+      try{ await navigator.clipboard.writeText(items); showToast('Lista do inquilino copiada 👍'); }
+      catch{ showToast('Não foi possível copiar'); }
+    });
+
+    qs('#copyProp').addEventListener('click', async ()=>{
+      const items = [
+        'Manter o imóvel limpo e em boas condições',
+        'Descrever o imóvel com clareza no anúncio',
+        'Incluir fotos reais e atuais',
+        'Ser transparente nas condições do contrato'
+      ].map((t,i)=> ${i+1}. ${t}).join('\n');
+      try{ await navigator.clipboard.writeText(items); showToast('Lista do proprietário copiada 👍'); }
+      catch{ showToast('Não foi possível copiar'); }
+    });
+  </script>
+</body>
+</html>

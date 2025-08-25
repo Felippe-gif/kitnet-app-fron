@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dicas / Ajuda 💡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Inter+Tight:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0d1117;          /* page background */
+      --surface:#7c5cff;     /* container background (tertiary) */
+      --panel:#111827;       /* modal and cards */
+      --text:#e6e6e6;        /* primary text */
+      --muted:#a8b3cf;       /* secondary text */
+      --accent:#7c5cff;      /* buttons */
+      --alt:#ffffff;         /* white */
+      --shadow:0 12px 32px rgba(0,0,0,.35);
+      --radius:16px;
+      --device-w: 460.15px;  /* baseado no Flutter */
+      --device-h: 847.5px;   /* baseado no Flutter */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; min-height:100vh}
+    body{
+      margin:0; background: radial-gradient(1000px 800px at 10% 0%, #121a2a 0%, transparent 65%),
+                                 radial-gradient(1000px 800px at 100% 90%, #141b2a 0%, transparent 55%),
+                                 var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      display:grid; place-items:center; padding: 18px;
+    }
+    .device{ width:min(var(--device-w), 96vw); height:min(var(--device-h), 96vh); background:var(--surface); border-radius:26px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column }
+
+    /* Top bar */
+    .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px }
+    .title{ margin:0; font: 700 22px/1.2 Inter Tight, Inter, sans-serif; letter-spacing:.2px }
+    .icon-btn{ width:36px; height:36px; display:grid; place-items:center; border-radius:10px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); cursor:pointer }
+    .icon-btn .ico{ width:20px; height:20px; color:#fff }
+
+    /* Content */
+    .content{ flex:1; overflow:auto; padding: 6px 14px 14px; display:grid; grid-template-rows: auto auto auto auto 1fr; gap:14px }
+
+    /* Avatar */
+    .avatar{ margin: 0 auto 4px; width:100px; height:100px; border-radius:50%; overflow:hidden; box-shadow: 0 8px 24px rgba(0,0,0,.25); border:2px solid rgba(255,255,255,.2) }
+    .avatar img{ width:100%; height:100%; object-fit:cover }
+
+    /* Intro */
+    .intro{ background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius:12px; padding:12px 14px; font-weight:600 }
+
+    /* Section title */
+    .sect-title{ font: 700 18px/1.25 Inter, sans-serif; margin: 2px 0 }
+
+    /* Steps box */
+    .steps{ background: rgba(255,255,255,.5); color:#10151f; border-radius:12px; padding:14px; font: 600 15px/1.45 Inter, sans-serif }
+    .steps b{ font-weight:700 }
+
+    /* Buttons */
+    .bar{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center }
+    .btn{ height:40px; display:inline-flex; align-items:center; justify-content:center; padding:0 12px; border-radius:10px; border:1px solid rgba(255,255,255,.14); background:#111827; color:#fff; font:600 14px/1 Inter Tight, Inter, sans-serif; cursor:pointer; box-shadow: 0 10px 24px rgba(0,0,0,.2) }
+
+    /* Modal (bottom sheet) */
+    .sheet-backdrop{ position: fixed; inset:0; background: rgba(0,0,0,.55); display:none; align-items:flex-end; z-index:50 }
+    .sheet{ width:100%; max-height: 75vh; background: var(--panel); border-radius: 16px 16px 0 0; padding: 16px; box-shadow: var(--shadow); color: var(--text) }
+    .sheet h3{ margin: 8px 0 12px; font: 700 18px/1.2 Inter, sans-serif }
+    .sheet p{ margin: 0 0 12px; color: var(--muted) }
+    .sheet .close-x{ position:absolute; right:16px; top:10px; background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer }
+
+    /* Toast */
+    .toast{ position: fixed; inset: auto 50% 20px auto; transform: translateX(50%); background:#10151f; border:1px solid rgba(255,255,255,.08); color:#e6e6e6; padding:10px 14px; border-radius: 10px; box-shadow: var(--shadow); font: 500 13px/1.3 Inter, sans-serif; opacity:0; pointer-events:none; transition:.25s; z-index:60 }
+    .toast.show{ opacity:1 }
+
+    @media (max-height: 760px){
+      .avatar{ width:88px; height:88px }
+      .btn{ height:36px }
+      .steps{ font-size:14px }
+      .title{ font-size:20px }
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <!-- Topbar -->
+    <div class="topbar">
+      <h1 class="title">Dicas / Ajuda 💡</h1>
+      <button class="icon-btn" id="closeBtn" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <main class="content">
+      <!-- Avatar topo -->
+      <div class="avatar">
+        <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=400&auto=format&fit=crop" alt="avatar"/>
+      </div>
+
+      <!-- Texto de boas-vindas -->
+      <div class="intro">
+        Bem-vindo à nossa área de apoio! Aqui você encontra informações importantes para alugar ou anunciar uma kitnet com segurança e tranquilidade.
+      </div>
+
+      <!-- Título seção -->
+      <div class="sect-title">✅ Passo a passo para alugar uma kitnet</div>
+
+      <!-- Passo a passo -->
+      <div class="steps">
+        <p><b>1. Pesquisa</b> – Utilize a busca para encontrar imóveis que atendam seu perfil (cidade, bairro, preço e quantidade de quartos).</p>
+        <p><b>2. Visita</b> – Agende uma visita para conhecer o espaço pessoalmente.</p>
+        <p><b>3. Contrato</b> – Leia atentamente todas as cláusulas antes de assinar.</p>
+        <p><b>4. Assinatura</b> – Formalize o acordo apenas após esclarecer todas as dúvidas.</p>
+      </div>
+
+      <!-- Botões de ação -->
+      <div class="bar">
+        <button class="btn" data-open="documentos">📄 Documentos</button>
+        <button class="btn" data-open="seguranca">🔒 Dicas de segurança</button>
+        <button class="btn" data-open="orientacoes">🏠 Orientações</button>
+        <button class="btn" data-open="faq">❓ FAQ</button>
+      </div>
+
+      <!-- Espaço flex para não cortar o CTA se adicionarmos mais conteúdo depois -->
+      <div></div>
+    </main>
+  </div>
+
+  <!-- Bottom Sheet (reutilizável) -->
+  <div class="sheet-backdrop" id="sheet">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <button class="close-x" aria-label="Fechar" id="sheetClose">✕</button>
+      <h3 id="sheetTitle">Título</h3>
+      <div id="sheetBody">
+        <p>Conteúdo do modal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const qs = (s, el=document)=> el.querySelector(s);
+    const qsa = (s, el=document)=> [...el.querySelectorAll(s)];
+
+    // Close button behaves like Navigator.pop
+    qs('#closeBtn').addEventListener('click', ()=>{
+      const dev = qs('.device');
+      dev.style.transform = 'scale(.98) translateY(8px)';
+      dev.style.opacity = '0';
+      setTimeout(()=> dev.remove(), 180);
+    });
+
+    // Toast utility
+    const toast = qs('#toast');
+    function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), 1600); }
+
+    // Bottom sheet helpers
+    const sheet = qs('#sheet');
+    const sheetTitle = qs('#sheetTitle');
+    const sheetBody = qs('#sheetBody');
+    const sheetClose = qs('#sheetClose');
+    const openSheet = (title, html)=>{ sheetTitle.textContent = title; sheetBody.innerHTML = html; sheet.style.display = 'flex'; };
+    const closeSheet = ()=>{ sheet.style.display = 'none'; };
+    sheetClose.addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target === sheet) closeSheet(); });
+
+    // Map actions
+    qsa('[data-open]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.getAttribute('data-open');
+        if(id==='documentos'){
+          openSheet('📄 Documentos necessários', `
+            <p>RG ou CNH, CPF, comprovante de renda (3 últimos), comprovante de residência e, se houver, fiador/seguro-fiança.</p>
+            <p><b>Dica:</b> digitalize as cópias para agilizar o envio.</p>
+          `);
+        } else if(id==='seguranca'){
+          openSheet('🔒 Dicas de segurança', `
+            <p>Visite o imóvel de dia, verifique portas/janelas, teste torneiras e energia. Nunca pague sinal sem contrato.</p>
+            <p><b>Verifique</b> reputação do anunciante e leia o contrato com atenção.</p>
+          `);
+        } else if(id==='orientacoes'){
+          openSheet('🏠 Orientações gerais', `
+            <p>Combine regras de convivência, verifique taxas (condomínio, IPTU) e datas de pagamento. Fotografe o estado do imóvel na entrada.</p>
+          `);
+        } else if(id==='faq'){
+          openSheet('❓ Perguntas Frequentes', `
+            <p><b>Posso alugar sem fiador?</b> Sim, via seguro-fiança ou caução, conforme política do proprietário.</p>
+            <p><b>Quanto tempo leva?</b> Em média 3–7 dias, dependendo da análise.</p>
+          `);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
